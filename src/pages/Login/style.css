@@ -1,0 +1,28 @@
+.login-screen{
+  display: flex;
+
+  width: 100vw;
+  height: 80vh;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+
+}
+
+.label{
+  color: white;
+  font-weight: bold;
+}
+
+.form-input{
+  color: white;
+  background: #414150;
+  border-width: 2px;
+  
+}
+
+.error-label{
+  color:rgb(255, 20,50);
+}
+

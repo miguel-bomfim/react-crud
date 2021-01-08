@@ -1,0 +1,33 @@
+.header-buttons{
+  margin: 50px 0 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-header{
+  background: #109b9f;
+}
+
+.badges{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.badge-item{
+  margin: 5px 0;
+  cursor: pointer;
+  transition: 200ms;
+  color: black;
+}
+.edit:hover{
+  background-color:#4682B8;
+  color: white;
+}
+.del:hover{
+  background-color: #DC143C;
+  color: white;
+}
