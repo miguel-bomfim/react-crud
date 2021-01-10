@@ -14,6 +14,7 @@ const Routes = () => (
       <Switch>
         <Route exact path="/" component={Login} />
         <RoutesPrivate path="/app" component={UserData} />
+        <RoutesPrivate path="/new/:id" component={AddUser} />
         <RoutesPrivate path="/new" component={AddUser} />
         <Route path="*" component={() => <h1>Page not found</h1>} />
       </Switch>

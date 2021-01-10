@@ -9,6 +9,7 @@
   background: #109b9f;
 }
 
+
 .badges{
   display: flex;
   justify-content: space-around;
@@ -18,7 +19,6 @@
 }
 
 .badge-item{
-  margin: 5px 0;
   cursor: pointer;
   transition: 200ms;
   color: black;

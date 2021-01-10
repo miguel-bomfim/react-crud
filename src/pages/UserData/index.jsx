@@ -7,14 +7,14 @@ import './style.css';
 import api from "../../services/api";
 
 import StoreContext from '../../Store/Context';
-import  {withRouter} from 'react-router-dom';
-
-// import { logout } from '../../services/auth';
-// import { Redirect } from 'react-router';
+import  {useHistory} from 'react-router-dom';
 
 
-function UserData({ history }) {
+
+function UserData() {
+  const history = useHistory();
   const { setToken } = useContext(StoreContext);
+
   const [users, SetUsers] = useState([{
     id: 0,
     nome: "",
@@ -25,7 +25,15 @@ function UserData({ history }) {
     perfilTipo: ""
   }]);
 
-  useEffect(() => {
+  const { token } = useContext(StoreContext);
+
+  var config = {
+    headers: {
+      'Authorization': `Bearer ${token}` 
+    }
+  }
+
+  function loadUsers(){
     api.get("/usuarios")
     .then(res => {
       SetUsers(res.data.content);
@@ -34,40 +42,39 @@ function UserData({ history }) {
     .catch((err) => {
       console.error("ops! ocorreu um erro" + err);
     });
+  }
+
+  useEffect(() => {
+    console.log("users loaded")
+    loadUsers()
   }, []);
 
+  function deleteUser(id){
+    api.delete(`/usuarios/${id}`, config)
+    .then(loadUsers)
+    .catch((err) => {
+      console.error("ops! ocorreu um erro" + err);
+    });
+  }
 
-  function handleLogout(e){
-    e.preventDefault();
+  function editUser(id){
+    history.push(`/new/${id}`);
+  }
+
+  function handleLogout(){
     setToken(null);
     history.push('/');
   }
 
-  // function handleNew(e){
-  //   e.preventDefault();
+  function handleNewUser(){
+    history.push('/new');
+  }
 
-  //   SetRender({redirect: "new"});
-  // };
-  // if(render.redirect === "new") {
-  //   console.log('redirecionado');
-  //   return <Redirect to="/new" />
-  // }
-
-  // function deleteUser(e) {
-  //   api.delete(`/usuarios/${users.id}`)
-  //   .then(res => {
-  //     SetUsers(res.data.content);
-  //     console.log(res.data.content);
-  //   })
-  //   .catch((err) => {
-  //     console.error("ops! ocorreu um erro" + err);
-  //   });
-  // }
 
   return (
     <div className="container">
       <header className="header-buttons">
-        <Button variant="success">Novo</Button>
+        <Button onClick={handleNewUser} variant="success">Novo</Button>
         <Button onClick={handleLogout} variant="outline-danger">Sair</Button>
       </header>
       <Table striped bordered hover variant="dark">
@@ -91,10 +98,14 @@ function UserData({ history }) {
               <td>{user.email}</td>
               <td>{user.perfilTipo}</td>
               <td className="badges">
-              <Badge className="badge-item edit" pill variant="info">
+              <Badge
+                onClick={()=>editUser(user.id)}
+                className="badge-item edit" pill variant="info">
                 Editar
               </Badge>
-              <Badge className="badge-item del" pill variant="warning">
+              <Badge
+                onClick={()=>deleteUser(user.id)}
+                className="badge-item del" pill variant="warning">
                 Deletar
               </Badge>
               </td>
@@ -107,4 +118,4 @@ function UserData({ history }) {
     </div>
   );
 }
-export default withRouter(UserData);
+export default UserData;

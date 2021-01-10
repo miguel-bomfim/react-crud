@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import StoreContext from '../../Store/Context'
-import  {withRouter} from 'react-router-dom'
+import  {useHistory} from 'react-router-dom'
 
 import { Form, Button } from 'react-bootstrap';
 import './style.css';
@@ -9,30 +9,35 @@ import api from "../../services/api";
 // import axios from "axios";
 
 
-function Login({ history }){
-  const [values, SetValues] = useState({
+function Login(){
+  const history = useHistory();
+  const [loginValues, SetLoginValues] = useState({
     usuario:'',
     senha:''
   });
   const { setToken } = useContext(StoreContext);
+  
+  useEffect(()=>{
+    setToken(null)
+  }, []);
 
   function onChange(e){
-    const newValues={...values};
+    const newValues={...loginValues};
     newValues[e.target.name]=e.target.value;
-    SetValues(newValues);
-    console.log(newValues);
+    SetLoginValues(newValues);
   }
 
   function onSubmit(e){
     e.preventDefault();
     api
-    .post("autenticacao", values)
+    .post("autenticacao", loginValues)
     .then(res => {
       setToken(res.data.token);
+      console.log(res.data.token);
       history.push('/app');
     })
     .catch((err) => {
-      SetValues(values);
+      SetLoginValues(loginValues);
       console.error("ops! ocorreu um erro" + err);
 
     });
@@ -48,7 +53,7 @@ function Login({ history }){
             type="text"
             placeholder="Digite seu usuário aqui"
             onChange={(e)=>onChange(e)}
-            value={values.usuario}
+            value={loginValues.usuario}
             name="usuario"
             required
           />
@@ -61,7 +66,7 @@ function Login({ history }){
             type="password"
             placeholder="Digite sua senha aqui"
             onChange={onChange}
-            value={values.senha}
+            value={loginValues.senha}
             name="senha"
             required/>
         </Form.Group>
@@ -73,5 +78,5 @@ function Login({ history }){
   );
 
 }
-export default withRouter(Login);
+export default Login;
 
