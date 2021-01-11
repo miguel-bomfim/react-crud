@@ -7,7 +7,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 #### First, you need to have Docker installed on your pc
 #### .then
 
-### `docker run -p 8090:8090 valdenirsantana/spring-api-alunos-bolsas:0.0.1-SNAPSHOT`
+#### `docker run -p 8090:8090 valdenirsantana/spring-api-alunos-bolsas:0.0.1-SNAPSHOT`
 
 ### `git clone https://github.com/miguel-bomfim/react-crud`
 
