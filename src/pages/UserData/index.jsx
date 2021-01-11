@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-
+import  {useHistory} from 'react-router-dom';
 
 import { Badge, Button, Table } from 'react-bootstrap';
 import './style.css';
 
-import api from "../../services/api";
-
+import api from '../../services/api';
 import StoreContext from '../../Store/Context';
-import  {useHistory} from 'react-router-dom';
 
 
-
-function UserData() {
+export default function UserData() {
   const history = useHistory();
-  const { setToken } = useContext(StoreContext);
-
+  const { token, setToken } = useContext(StoreContext);
   const [users, SetUsers] = useState([{
     id: 0,
     nome: "",
@@ -25,29 +21,26 @@ function UserData() {
     perfilTipo: ""
   }]);
 
-  const { token } = useContext(StoreContext);
-
+  //pick user values
   var config = {
     headers: {
       'Authorization': `Bearer ${token}` 
     }
   }
+  
+  useEffect(() => {
+    loadUsers()
+  }, []);
 
   function loadUsers(){
     api.get("/usuarios")
     .then(res => {
       SetUsers(res.data.content);
-      console.log(res.data.content);
     })
     .catch((err) => {
       console.error("ops! ocorreu um erro" + err);
     });
   }
-
-  useEffect(() => {
-    console.log("users loaded")
-    loadUsers()
-  }, []);
 
   function deleteUser(id){
     api.delete(`/usuarios/${id}`, config)
@@ -57,19 +50,16 @@ function UserData() {
     });
   }
 
-  function editUser(id){
+  function handleEditUser(id){
     history.push(`/new/${id}`);
   }
-
+  function handleNewUser(){
+    history.push('/new');
+  }
   function handleLogout(){
     setToken(null);
     history.push('/');
   }
-
-  function handleNewUser(){
-    history.push('/new');
-  }
-
 
   return (
     <div className="container">
@@ -99,7 +89,7 @@ function UserData() {
               <td>{user.perfilTipo}</td>
               <td className="badges">
               <Badge
-                onClick={()=>editUser(user.id)}
+                onClick={()=>handleEditUser(user.id)}
                 className="badge-item edit" pill variant="info">
                 Editar
               </Badge>
@@ -111,11 +101,8 @@ function UserData() {
               </td>
             </tr>
           ))}
-          
-    
         </tbody>
       </Table>
     </div>
   );
 }
-export default UserData;

@@ -1,49 +1,54 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { Button, Col, Form } from 'react-bootstrap';
-import './style.css'
-import api from "../../services/api";
-import { useHistory, useParams } from "react-router-dom";
+import './style.css';
 
-import StoreContext from '../../Store/Context'
+import api from '../../services/api';
+import StoreContext from '../../Store/Context';
 
-
-function AddUser(){
-  const history = useHistory();
-  const {id} = useParams();
+export default function AddEditUser(){
+  const history = useHistory();//helps navigate between end-points
+  const {id} = useParams(); //pick id param from url
+  const { token } = useContext(StoreContext);//pick token value from context
   const [newUser, SetNewUser] = useState({
     nome: "",
     usuario: "",
     email: "",
     senha: "",
-    telefone: 0 ,
+    telefone: "" ,
     dataNascimento: "",
     sexo: "",
-    idade: 0,
-    perfilId: 1
+    idade: "",
+    perfilId: 1,
   });
-
-  async function findUser(id){
+  
+  //pick user values
+  function onChange(e){
+    const newValues={...newUser};
+    newValues[e.target.name]=e.target.value;
+    SetNewUser(newValues);
+  }
+  //header authetication
+  var config = {
+    headers: { 
+      'Authorization': `Bearer ${token}` 
+    }
+  }
+  
+  async function pickUser(id){
     const response = await api.get(`usuarios/${id}`)
     SetNewUser(response.data)
   }
   useEffect(()=> {
-    console.log(id);
     if (id !== undefined){
-      findUser(id)
+      pickUser(id)
     }
-  },[])
-
-  const { token } = useContext(StoreContext);
-
-  var config = {
-    headers: {
-      'Authorization': `Bearer ${token}` 
-    }
-  }
+  },[]);
 
   function onSubmit(e){
     e.preventDefault();
+
     if (id !== undefined){
       api
       .put(`/usuarios/${id}`, newUser, config)
@@ -52,7 +57,6 @@ function AddUser(){
       api
       .post("/usuarios", newUser, config)
       .then(res => {
-        console.log(res);
         history.push('/app');
       })
       .catch((err) => {
@@ -61,18 +65,11 @@ function AddUser(){
     }
   };
 
-  function onChange(e){
-    const newValues={...newUser};
-    newValues[e.target.name]=e.target.value;
-    SetNewUser(newValues);
-  }
-
   return (
     <Form
       onSubmit={onSubmit}
       className="container form-new"
     >
-      
       <Form.Row >
         <Form.Group as={Col}>
           <Form.Label className="form-label">Nome</Form.Label>
@@ -104,7 +101,6 @@ function AddUser(){
             onChange={(e)=>onChange(e)}
             type="number"
             placeholder="+55"
-
           />
         </Form.Group>
       </Form.Row>
@@ -118,7 +114,6 @@ function AddUser(){
             onChange={(e)=>onChange(e)}
             type="text"
             placeholder="digite seu nome de usuário"
-  
           />
         </Form.Group>
 
@@ -129,7 +124,7 @@ function AddUser(){
             value={newUser.senha}
             onChange={(e)=>onChange(e)}
             type="password"
-            placeholder="************"
+            placeholder="**********"
           />
         </Form.Group>
 
@@ -140,7 +135,7 @@ function AddUser(){
             value={newUser.dataNascimento}
             onChange={(e)=>onChange(e)}
             type="text" 
-            placeholder="01-01-0001"
+            placeholder="DD-MM-AAAA"
           />
         </Form.Group>
 
@@ -151,6 +146,7 @@ function AddUser(){
             value={newUser.idade}
             onChange={(e)=>onChange(e)}
             type="number" 
+            placeholder="digite sua idade"
           />
         </Form.Group>
       </Form.Row>
@@ -159,26 +155,27 @@ function AddUser(){
       <Form.Row >
         <Form.Group as={Col} >
           <Form.Label>Sexo</Form.Label>
-          <Form.Control 
+          <Form.Control
+            as="select" 
             name="sexo"
             value={newUser.sexo}
             onChange={(e)=>onChange(e)}
             type="text"
-          >
-            {/* <option>Choose...</option> */}
-            
-            {/* <option>Feminino</option> */}
+          > 
+            <option>Select...</option>
+            <option>MASCULINO</option>
+            <option>FEMININO</option>
           </Form.Control>
           
         </Form.Group>
 
-        <Form.Group as={Col} >
+        <Form.Group as={Col} id="perfil-id" >
           <Form.Label>Perfil</Form.Label>
           <Form.Control
             name="perfilId"
             value={newUser.perfilId}
-            onChange={(e)=>onChange(e)} 
-            type="text"
+            onChange={(e)=> onChange(e)} 
+            type="number"
           >
             {/* <option>Choose...</option> */}
             
@@ -192,6 +189,4 @@ function AddUser(){
       </Button>
     </Form>
   );
-
 }
-export default AddUser;

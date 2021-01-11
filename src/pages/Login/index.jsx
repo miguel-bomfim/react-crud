@@ -1,26 +1,21 @@
-import React, { useState, useContext, useEffect } from "react";
-import StoreContext from '../../Store/Context'
-import  {useHistory} from 'react-router-dom'
+import React, { useState, useContext } from 'react';
+import  {useHistory} from 'react-router-dom';
 
 import { Form, Button } from 'react-bootstrap';
 import './style.css';
 
-import api from "../../services/api";
-// import axios from "axios";
+import api from '../../services/api';
+import StoreContext from '../../Store/Context';
 
-
-function Login(){
+export default function Login(){
   const history = useHistory();
+  const { setToken } = useContext(StoreContext);
   const [loginValues, SetLoginValues] = useState({
     usuario:'',
     senha:''
   });
-  const { setToken } = useContext(StoreContext);
-  
-  useEffect(()=>{
-    setToken(null)
-  }, []);
 
+  //pick login values
   function onChange(e){
     const newValues={...loginValues};
     newValues[e.target.name]=e.target.value;
@@ -33,13 +28,11 @@ function Login(){
     .post("autenticacao", loginValues)
     .then(res => {
       setToken(res.data.token);
-      console.log(res.data.token);
       history.push('/app');
     })
     .catch((err) => {
       SetLoginValues(loginValues);
       console.error("ops! ocorreu um erro" + err);
-
     });
   };
 
@@ -76,7 +69,5 @@ function Login(){
       </Form>
     </div>
   );
-
 }
-export default Login;
 
