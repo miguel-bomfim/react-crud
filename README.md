@@ -20,6 +20,10 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
+
+##### Use these parameters to login and test
+#### login: claudio.peixoto
+#### password: 00000006
 #
 
 ### `npm run build`
