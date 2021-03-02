@@ -1,3 +1,7 @@
+.form-login{
+  width: 300px;
+}
+
 .login-screen{
   display: flex;
 
@@ -19,10 +23,10 @@
   color: white;
   background: #414150;
   border-width: 2px;
-  
 }
 
-.error-label{
+.span-error{
   color:rgb(255, 20,50);
+  font-size: 15px;
 }
 

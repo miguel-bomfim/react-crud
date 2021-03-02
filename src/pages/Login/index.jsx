@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import  {useHistory} from 'react-router-dom';
+import  { useHistory } from 'react-router-dom';
 
 import { Form, Button } from 'react-bootstrap';
 import './style.css';
@@ -10,16 +10,22 @@ import StoreContext from '../../Store/Context';
 export default function Login(){
   const history = useHistory();
   const { setToken } = useContext(StoreContext);
-  const [loginValues, SetLoginValues] = useState({
+  const [loginValues, setLoginValues] = useState({
     usuario:'',
     senha:''
   });
+  const [loginError, setLoginError] = useState(false);
 
   //pick login values
   function onChange(e){
     const newValues={...loginValues};
     newValues[e.target.name]=e.target.value;
-    SetLoginValues(newValues);
+    setLoginValues(newValues);
+    setLoginError(false);
+  }
+
+  function ErrorComponent(){
+    return <span className="span-error">Usuário inexistente ou Senha incorreta</span>
   }
 
   function onSubmit(e){
@@ -31,14 +37,18 @@ export default function Login(){
       history.push('/app');
     })
     .catch((err) => {
-      SetLoginValues(loginValues);
+      setLoginValues(loginValues);
+      setLoginError(true);
       console.error("ops! ocorreu um erro" + err);
     });
   };
 
   return (
     <div className="login-screen">
-      <Form onSubmit={onSubmit}>
+      <Form
+        onSubmit={onSubmit}
+        className="form-login"  
+      >
         <Form.Group >
           <Form.Label className="label">Usuário</Form.Label>
           <Form.Control
@@ -48,10 +58,10 @@ export default function Login(){
             onChange={(e)=>onChange(e)}
             value={loginValues.usuario}
             name="usuario"
+            size="lg"
             required
           />
         </Form.Group>
-
         <Form.Group >
           <Form.Label  className="label">Senha</Form.Label>
           <Form.Control
@@ -61,7 +71,9 @@ export default function Login(){
             onChange={onChange}
             value={loginValues.senha}
             name="senha"
+            size="lg"
             required/>
+        {loginError && <ErrorComponent/>}
         </Form.Group>
         <Button variant="primary" type="submit" block>
           Login
